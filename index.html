@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Server-Panel | Management Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- PWA manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0iIzBmMTcyYSIvPjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjYwIiBmaWxsPSIjM2I4MmY2Ii8+PHJlY3QgeD0iNzYiIHk9Ijc2IiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IndoaXRlIi8+PGNpcmNsZSBjeD0iODYiIGN5PSI4NiIgcj0iMyIgZmlsbD0iIzBmMTcyYSIvPjxjaXJjbGUgY3g9IjEwNiIgY3k9Ijg2IiByPSIzIiBmaWxsPSIjMGYxNzJhIi8+PGNpcmNsZSBjeD0iODYiIGN5PSIxMDYiIHI9IjMiIGZpbGw9IiMwZjE3MmEiLz48Y2lyY2xlIGN4PSIxMDYiIGN5PSIxMDYiIHI9IjMiIGZpbGw9IiMwZjE3MmEiLz48L3N2Zz4=">
+    <link rel="icon" href="Screenshot 2026-03-08 105358.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains+Mono', monospace;
+        }
+
+        .glass-card {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-tap {
+            transition: transform 0.1s ease, background-color 0.2s;
+        }
+        .btn-tap:active {
+            transform: scale(0.96);
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        #toast.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .hidden { display: none; }
+
+        .edit-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 10px 16px;
+            width: 100%;
+            color: white;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .edit-input:focus {
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="min-h-screen flex flex-col items-center justify-center px-6 animate-in fade-in duration-500">
+        <div class="mb-10 text-center">
+            <div class="w-20 h-20 bg-green-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-green-900/40 mx-auto mb-6">
+                <i data-lucide="server" class="text-white w-10 h-10"></i>
+            </div>
+            <h1 class="text-4xl font-black tracking-tight mb-2 uppercase">Server-Panel</h1>
+            <p class="text-slate-500 text-xs font-black tracking-[0.3em] uppercase">Public Access Mode</p>
+        </div>
+
+        <div class="w-full max-w-sm glass-card rounded-[32px] p-8">
+            <h2 class="text-xl font-bold mb-8">Your name</h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-3 block">UserNAME</label>
+                    <div class="relative">
+                        <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"></i>
+                        <input type="text" id="username" placeholder="Write your name..." 
+                            class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                    </div>
+                </div>
+
+                <button onclick="handleLogin()" class="btn-tap w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-900/20">
+                    <span>Login</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <p class="mt-6 text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                
+            </p>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard-screen" class="hidden">
+        <nav class="sticky top-0 w-full glass-card border-x-0 border-t-0 z-50 px-4 py-4 backdrop-blur-md bg-opacity-80">
+            <div class="max-w-2xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-900/20">
+                        <i data-lucide="server" class="text-white w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-base tracking-tight leading-none">Server-Panel</h1>
+                        <span id="display-role" class="text-[9px] text-slate-500 uppercase font-black tracking-widest">Administrator</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="master-edit-btn" onclick="toggleEditMode()" class="hidden p-2.5 bg-slate-800 rounded-xl text-blue-400 border border-slate-700 btn-tap">
+                        <i data-lucide="edit-3" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="handleLogout()" class="p-2.5 bg-slate-800 rounded-xl text-red-400 border border-slate-700 btn-tap">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-2xl mx-auto px-4 py-6 md:py-10">
+            <!-- PROFILE HEADER -->
+            <header class="mb-8 flex justify-between items-start">
+                <div>
+                    <h2 id="display-name" class="text-2xl md:text-3xl font-extrabold text-white mb-1">User</h2>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        <p id="display-server-text" class="text-slate-400 text-xs font-semibold tracking-wide uppercase italic">Survival World One • 1.20.1</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CREATOR EDIT PANEL (Only for Bun MengHeng) -->
+            <div id="edit-panel" class="hidden glass-card rounded-2xl p-6 mb-8 border-blue-500/30 bg-blue-500/5">
+                <div class="flex items-center gap-2 mb-4">
+                    <i data-lucide="shield-check" class="text-blue-500 w-5 h-5"></i>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-blue-400">Creator Control Panel</h3>
+                </div>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold uppercase mb-1 block">Server IP</label>
+                            <input type="text" id="edit-ip-input" class="edit-input" value="mc.example-server.com:25565">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold uppercase mb-1 block">Software</label>
+                            <input type="text" id="edit-software-input" class="edit-input" value="Paper 1.20.1">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-500 font-bold uppercase mb-1 block">Uptime</label>
+                        <input type="text" id="edit-uptime-input" class="edit-input" value="2d 14h 05m">
+                    </div>
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="saveChanges()" class="flex-1 bg-blue-600 py-3 rounded-xl font-bold btn-tap text-sm">Update Dashboard</button>
+                        <button onclick="toggleEditMode()" class="px-6 bg-slate-800 py-3 rounded-xl font-bold btn-tap text-sm text-slate-400">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl md:rounded-3xl p-6 md:p-8">
+                <div class="flex items-center gap-2 mb-8 text-slate-500">
+                    <i data-lucide="wifi" class="w-4 h-4 text-blue-500"></i>
+                    <h3 class="text-[11px] font-black uppercase tracking-[0.2em]">Live Connection</h3>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- SERVER IP -->
+                    <div class="flex flex-col">
+                        <label class="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-3">Server Address</label>
+                        <div class="flex items-center gap-4">
+                            <button onclick="copyData(document.getElementById('display-ip').innerText)" class="btn-tap shrink-0 w-12 h-12 bg-slate-800 text-blue-400 rounded-xl border border-slate-700 flex items-center justify-center">
+                                <i data-lucide="copy" class="w-5 h-5"></i>
+                            </button>
+                            <span id="display-ip" class="font-mono text-base md:text-xl text-blue-300 break-all leading-tight font-bold">mc.example-server.com:25565</span>
+                        </div>
+                    </div>
+
+                    <!-- SOFTWARE -->
+                    <div class="flex flex-col">
+                        <label class="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-3">Software / Engine</label>
+                        <div class="flex items-center gap-4">
+                            <button onclick="copyData(document.getElementById('display-software').innerText)" class="btn-tap shrink-0 w-12 h-12 bg-slate-800 text-blue-400 rounded-xl border border-slate-700 flex items-center justify-center">
+                                <i data-lucide="copy" class="w-5 h-5"></i>
+                            </button>
+                            <span id="display-software" class="text-lg md:text-xl font-bold text-slate-100">Paper 1.20.1</span>
+                        </div>
+                    </div>
+
+                    <!-- UPTIME -->
+                    <div class="flex flex-col">
+                        <label class="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-3">Session Uptime</label>
+                        <div class="flex items-center gap-4">
+                            <button onclick="copyData(document.getElementById('display-uptime').innerText)" class="btn-tap shrink-0 w-12 h-12 bg-slate-800 text-blue-400 rounded-xl border border-slate-700 flex items-center justify-center">
+                                <i data-lucide="copy" class="w-5 h-5"></i>
+                            </button>
+                            <span id="display-uptime" class="text-lg md:text-xl font-bold text-slate-100">2d 14h 05m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast">COPIED TO CLIPBOARD</div>
+
+    <script>
+        lucide.createIcons();
+
+        // ---- persistent storage helpers ----
+        function storeData() {
+            const data = {
+                username: document.getElementById('username').value.trim(),
+                ip: document.getElementById('display-ip').innerText,
+                software: document.getElementById('display-software').innerText,
+                uptime: document.getElementById('display-uptime').innerText
+            };
+            localStorage.setItem('serverPanelData', JSON.stringify(data));
+        }
+
+        function loadStoredData() {
+            const json = localStorage.getItem('serverPanelData');
+            if (json) {
+                try {
+                    return JSON.parse(json);
+                } catch {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        function clearStoredData() {
+            localStorage.removeItem('serverPanelData');
+        }
+
+        function handleLogin() {
+            const user = document.getElementById('username').value.trim();
+            
+            if (user !== "") {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard-screen').classList.remove('hidden');
+                
+                document.getElementById('display-name').innerText = user;
+                
+                const roleSpan = document.getElementById('display-role');
+                const editBtn = document.getElementById('master-edit-btn');
+
+                // Privilege check
+                if (user === "Bun MengHeng" || user === "Sinlong" || user === "Admin"  ) {
+                    roleSpan.innerText = "System Creator";
+                    roleSpan.classList.replace('text-slate-500', 'text-blue-400');
+                    editBtn.classList.remove('hidden');
+                    showToast("Access Granted: Creator Mode");
+                } else {
+                    roleSpan.innerText = "Guest User";
+                    editBtn.classList.add('hidden');
+                    showToast("Welcome back, " + user);
+                }
+
+                // remember credentials and current dashboard values
+                storeData();
+            } else {
+                showToast("Please enter a name to login");
+            }
+        }
+                
+        function handleLogout() {
+            document.getElementById('dashboard-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('username').value = "";
+            document.getElementById('edit-panel').classList.add('hidden');
+            // clear stored login info so auto-login won't occur
+            clearStoredData();
+        }
+        function toggleEditMode() {
+            const panel = document.getElementById('edit-panel');
+            panel.classList.toggle('hidden');
+            lucide.createIcons();
+        }
+
+        function saveChanges() {
+            const newIp = document.getElementById('edit-ip-input').value;
+            const newSoftware = document.getElementById('edit-software-input').value;
+            const newUptime = document.getElementById('edit-uptime-input').value;
+            
+            document.getElementById('display-ip').innerText = newIp;
+            document.getElementById('display-software').innerText = newSoftware;
+            document.getElementById('display-uptime').innerText = newUptime;
+            
+            // Also update the sub-header
+            document.getElementById('display-server-text').innerText = "Active Server • " + newSoftware;
+            
+            toggleEditMode();
+            showToast("Dashboard Updated by Creator");
+            // persist changes as well
+            storeData();
+        }
+
+        function copyData(text) {
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            temp.style.position = 'fixed';
+            temp.style.left = '-9999px';
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast("COPIED TO CLIPBOARD");
+        }
+        function savelog(msg) {
+            console.log("[Server-Panel Log] " + msg);
+           
+        }   
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('active');
+            if (window.navigator.vibrate) window.navigator.vibrate(20);
+            setTimeout(() => toast.classList.remove('active'), 2000);
+        }
+
+        // restore data & auto-login on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const stored = loadStoredData();
+            if (stored && stored.username) {
+                document.getElementById('username').value = stored.username;
+                if (stored.ip) document.getElementById('display-ip').innerText = stored.ip;
+                if (stored.software) document.getElementById('display-software').innerText = stored.software;
+                if (stored.uptime) document.getElementById('display-uptime').innerText = stored.uptime;
+                document.getElementById('display-server-text').innerText = "Active Server • " + stored.software;
+                handleLogin();
+            }
+        });
+
+        // register service worker for offline & PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(() => console.log('Service worker registered'))
+                .catch(console.error);
+        }
+    </script>
+    </script>
+</body>
+</html>
